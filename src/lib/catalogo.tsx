@@ -47,7 +47,11 @@ export function CatalogoProvider({ children }: { children: ReactNode }) {
     }
     setCategorias((cats.data as CategoriaProducto[]).sort(porOrden))
     setProductos(
-      (prods.data as ProductoCatalogo[]).sort(porOrden).map((p) => ({ ...p, colores: [...p.colores].sort(porOrden) })),
+      (prods.data as ProductoCatalogo[])
+        // Resguardo: un producto sin foto (por ejemplo, creado desde Finanzas) no se muestra roto.
+        .filter((p) => Boolean(p.foto_principal))
+        .sort(porOrden)
+        .map((p) => ({ ...p, colores: [...p.colores].sort(porOrden) })),
     )
     setConfig((conf.data as Config[])[0] ?? null)
     setEstado('listo')

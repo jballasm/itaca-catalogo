@@ -36,6 +36,22 @@ Igual a Ítaca Finanzas (mismas versiones): Vite + React + TS · Tailwind v4 (to
 - La fila de `config` (con el WhatsApp) **no** va en ninguna migración: se inserta a mano en el SQL Editor.
 - `solicitudes_personalizacion`: el público solo inserta (`nombre`, `idea`, `foto_path`, `canal`) y **sin** `.select()` después del insert.
 
+## Productos y precios se editan solo en Modo Tere (decisión de Vicente, Fase 9)
+- El catálogo **no muestra productos sin `foto_principal`** (resguardo en `src/lib/catalogo.tsx`); Modo Tere los marca "Sin foto · no se ve".
+
+### Pendiente en Ítaca Finanzas (no se hace desde aquí; aplicar en una sesión dentro de `Itaca-Finanzas/`)
+1. **Catálogo de Finanzas en solo lectura**: quitar "Nuevo producto" y la edición de nombre, precio y pack en `src/pages/Catalogo.tsx`. Mostrar un botón **"Editar en Modo Tere"** → `https://jballasm.github.io/itaca-catalogo/#/tere`.
+   - Por qué: un producto creado en Finanzas queda `publicado = true` sin foto ni slug; y si Finanzas le pone precio a una cartera, no apaga `consultar_precio`, así que el catálogo la sigue mostrando como "Consultar precio".
+2. **Mantener** en Finanzas: "Registrar venta" (lee los precios compartidos) y el interruptor **"Desactivar (deja de aparecer al vender)"** (`activo`), que es solo de ventas.
+3. Finanzas debería **ignorar `consultar_precio = true`** al listar productos para vender (hoy lo cubre `activo = false`).
+4. Verificar después: Catálogo de Finanzas muestra precios iguales a Modo Tere, y "Registrar venta" sigue calculando el pack de Aura.
+
+## Pulido (Fase 9)
+- **Compartir el link**: `index.html` tiene Open Graph con `public/og.jpg` (1200×630). Todos los links muestran la misma tarjeta (los `#/…` no llegan a los lectores de vista previa; tarjeta por producto requeriría servidor).
+- **Peso**: Modo Tere (`React.lazy`) y `browser-image-compression` (`import()`) se cargan solo cuando se usan; React y Supabase van en archivos aparte (`vite.config.ts`).
+- **Contraste**: para texto chico usar `text-tierra-texto` / `text-terracota-texto` (tokens solo del catálogo, AA ≥ 4,5); `tierra` y `terracota` quedan para íconos, bordes y fondos. Sugerido llevarlos también a Finanzas (su Login tiene el mismo caso).
+- **Samsung Internet en modo oscuro** puede oscurecer la página aunque declaramos `color-scheme: only light` y `darkreader-lock`. Quien abre desde Instagram (link en la bio) no lo ve.
+
 ## Reglas de este proyecto
 
 - El repo es **público**. Nunca subir: `.env*`, la llave `service_role`, cartolas ni datos de clientas. `.gitignore` ya bloquea `.env*`, `fotos-catalogo/`, `*.xlsx`, `*.xls`, `*.csv`, `*.pdf`.

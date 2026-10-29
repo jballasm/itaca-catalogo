@@ -80,7 +80,7 @@ export function Solicitudes() {
               type="button"
               disabled={ocupada === s.id}
               onClick={() => window.confirm('¿Eliminar esta solicitud y su foto?') && hacer(s, () => eliminarSolicitud(s))}
-              className="self-end min-h-11 text-[13px] text-terracota underline underline-offset-2"
+              className="self-end min-h-11 text-[13px] text-terracota-texto underline underline-offset-2"
             >
               Eliminar
             </button>

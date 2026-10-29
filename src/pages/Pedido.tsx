@@ -123,7 +123,7 @@ export function Pedido() {
 
         {config && (
           <fieldset ref={refEntrega} className="flex flex-col gap-1.5">
-            <legend className={`text-[12px] tracking-[0.14em] uppercase pb-1.5 ${faltaEntrega && !entrega ? 'text-terracota' : 'text-tinta-2'}`}>
+            <legend className={`text-[12px] tracking-[0.14em] uppercase pb-1.5 ${faltaEntrega && !entrega ? 'text-terracota-texto' : 'text-tinta-2'}`}>
               Entrega{faltaEntrega && !entrega && ' · elige cómo quieres recibirlo'}
             </legend>
             <Opcion
@@ -200,7 +200,7 @@ export function Pedido() {
               )}
             </span>
           </div>
-          {!config && <p className="text-[13px] text-terracota px-1">No pudimos cargar los datos de contacto. Recarga la página.</p>}
+          {!config && <p className="text-[13px] text-terracota-texto px-1">No pudimos cargar los datos de contacto. Recarga la página.</p>}
           <BotonEnvio
             href={config && mensaje ? linkWhatsApp(config, mensaje) : null}
             deshabilitado={!config}

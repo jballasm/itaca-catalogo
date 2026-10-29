@@ -138,11 +138,11 @@ export function FotoSubible({
       </button>
       <span className="text-[11px] text-tinta-2 text-center leading-tight">{etiqueta}</span>
       {ruta && alQuitar && (
-        <button type="button" onClick={alQuitar} className="text-[11px] text-terracota underline underline-offset-2 min-h-8">
+        <button type="button" onClick={alQuitar} className="text-[11px] text-terracota-texto underline underline-offset-2 min-h-8">
           Quitar
         </button>
       )}
-      {error && <span className="text-[11px] text-terracota text-center">{error}</span>}
+      {error && <span className="text-[11px] text-terracota-texto text-center">{error}</span>}
       <input
         ref={ref}
         type="file"
@@ -159,7 +159,7 @@ export function FotoSubible({
 
 /** Aviso de resultado al guardar. */
 export function Resultado({ texto, error }: { texto: string | null; error: string | null }) {
-  if (error) return <p role="alert" className="text-[14px] text-terracota text-center">{error}</p>
+  if (error) return <p role="alert" className="text-[14px] text-terracota-texto text-center">{error}</p>
   if (texto) return <p aria-live="polite" className="text-[14px] text-oliva text-center">{texto}</p>
   return null
 }

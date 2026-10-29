@@ -124,7 +124,7 @@ function Ficha({ p }: { p: ProductoCatalogo }) {
               <>
                 <div className="font-serif text-[26px] font-semibold cifra">{formatCLP(p.precio)}</div>
                 {p.precio_pack != null && p.unidades_pack && (
-                  <div className="text-[13px] text-tierra">
+                  <div className="text-[13px] text-tierra-texto">
                     {p.unidades_pack} por {formatCLP(p.precio_pack)}
                   </div>
                 )}

@@ -33,7 +33,7 @@ export function Portada() {
       </div>
 
       <div className="relative flex-1 min-h-0">
-        <img src={HERO} alt="Acantilados frente al mar" className="block w-full h-full object-cover" />
+        <img src={HERO} alt="Acantilados frente al mar" fetchPriority="high" decoding="async" className="block w-full h-full object-cover" />
         <div className="absolute inset-0 bg-[linear-gradient(rgba(43,36,28,0)_55%,rgba(43,36,28,.6))]" />
         <div className="absolute inset-x-0 bottom-[30px] flex flex-col items-center gap-2.5 text-papel">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.4" aria-hidden="true">

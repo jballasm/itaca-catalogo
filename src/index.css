@@ -17,6 +17,9 @@
   --alerta-suave: #f6e9cf;
   --alerta-texto: #9a6b14;
   --terracota-suave: #e3b8a6;
+  /* Solo catálogo (Fase 9): versiones más oscuras para TEXTO chico, con contraste AA (≥ 4,5) sobre papel, tarjeta y arena. */
+  --tierra-texto: #7a5c3b;
+  --terracota-texto: #9a4524;
   /* "only" evita el oscurecimiento forzado del navegador en celulares con modo oscuro. */
   color-scheme: only light;
 }
@@ -37,6 +40,8 @@
   --color-alerta-suave: var(--alerta-suave);
   --color-alerta-texto: var(--alerta-texto);
   --color-terracota-suave: var(--terracota-suave);
+  --color-tierra-texto: var(--tierra-texto);
+  --color-terracota-texto: var(--terracota-texto);
 
   --font-serif: 'Cormorant Garamond', Georgia, serif;
   --font-sans: 'Jost', system-ui, sans-serif;
@@ -46,6 +51,12 @@ select,
 select option {
   background-color: var(--tarjeta);
   color: var(--tinta);
+}
+
+/* Foco visible solo con teclado (no al tocar), en el tono de texto de la marca. */
+:focus-visible {
+  outline: 2px solid var(--tierra-texto);
+  outline-offset: 2px;
 }
 
 html,

@@ -65,7 +65,7 @@ export function Login({ vistaInicial = 'ingresar' }: { vistaInicial?: Vista }) {
     <div className="min-h-dvh max-w-[480px] mx-auto px-8 pt-[100px] pb-10 flex flex-col">
       <div className="flex flex-col items-center text-center">
         <Logo className="w-[110px] h-[55px]" />
-        <div className="font-serif text-[40px] font-medium tracking-[0.12em] leading-none mt-5">ÍTACA</div>
+        <h1 className="font-serif text-[40px] font-medium tracking-[0.12em] leading-none mt-5">ÍTACA</h1>
         <div className="text-[12px] tracking-[0.4em] text-tinta-2 mt-4">MODO TERE</div>
         <div className="w-10 h-px bg-tierra mt-5" />
         <div className="font-serif italic text-[22px] text-tinta-2 mt-5">
@@ -75,7 +75,7 @@ export function Login({ vistaInicial = 'ingresar' }: { vistaInicial?: Vista }) {
 
       <form onSubmit={enviar} className="mt-16 flex flex-col gap-4">
         {!supabaseConfigurado && (
-          <p className="text-[13px] text-terracota">Falta configurar Supabase (VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY).</p>
+          <p className="text-[13px] text-terracota-texto">Falta configurar Supabase (VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY).</p>
         )}
         {vista !== 'nueva' && (
           <Campo
@@ -101,7 +101,7 @@ export function Login({ vistaInicial = 'ingresar' }: { vistaInicial?: Vista }) {
         )}
 
         {error && (
-          <p role="alert" className="text-[14px] text-terracota">
+          <p role="alert" className="text-[14px] text-terracota-texto">
             {error}
           </p>
         )}
@@ -119,7 +119,7 @@ export function Login({ vistaInicial = 'ingresar' }: { vistaInicial?: Vista }) {
               setError(null)
               setAviso(null)
             }}
-            className="self-center min-h-11 text-[15px] text-tierra underline underline-offset-4"
+            className="self-center min-h-11 text-[15px] text-tierra-texto underline underline-offset-4"
           >
             {vista === 'ingresar' ? '¿Olvidaste tu contraseña?' : 'Volver a ingresar'}
           </button>

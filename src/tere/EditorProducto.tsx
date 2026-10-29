@@ -70,6 +70,11 @@ function Editor({ id }: { id: string | null }) {
   const [guardadoComo, setGuardadoComo] = useState(inicial)
   const hayCambios = actual !== guardadoComo
 
+  // Un cambio nuevo borra el "Guardado ✓" anterior (si no, parece que ya está guardado).
+  useEffect(() => {
+    if (hayCambios) setResultado((r) => (r.texto ? { texto: null, error: r.error } : r))
+  }, [actual, hayCambios])
+
   useEffect(() => {
     if (!hayCambios) return
     const aviso = (e: BeforeUnloadEvent) => e.preventDefault()
@@ -281,7 +286,7 @@ function Editor({ id }: { id: string | null }) {
                   <button
                     type="button"
                     onClick={() => window.confirm(`¿Eliminar el color ${c.nombre || 'sin nombre'}?`) && setColores((cs) => cs.filter((x) => x.key !== c.key))}
-                    className="self-start min-h-11 text-[13px] text-terracota underline underline-offset-2"
+                    className="self-start min-h-11 text-[13px] text-terracota-texto underline underline-offset-2"
                   >
                     Eliminar color
                   </button>

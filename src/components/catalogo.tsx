@@ -109,7 +109,7 @@ export function Mensaje({ titulo, texto }: { titulo: string; texto: string }) {
       <Logo className="w-16 h-8" />
       <h1 className="font-serif text-[28px] font-semibold tracking-[0.14em] uppercase">{titulo}</h1>
       <p className="text-[15px] text-tinta-2">{texto}</p>
-      <Link to="/categorias" className="min-h-11 flex items-center text-[15px] text-tierra underline underline-offset-4">
+      <Link to="/categorias" className="min-h-11 flex items-center text-[15px] text-tierra-texto underline underline-offset-4">
         Volver al catálogo
       </Link>
     </div>

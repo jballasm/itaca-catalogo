@@ -94,7 +94,7 @@ export function Inicio() {
       <header className="bg-tinta text-papel px-5 py-3.5 flex justify-between items-center gap-3">
         <div className="flex flex-col gap-0.5">
           <span className="text-[11px] tracking-[0.26em] text-[#D9CBB4]">MODO EDITORA</span>
-          <span className="font-serif text-[22px] font-semibold">Hola, Tere</span>
+          <h1 className="font-serif text-[22px] font-semibold">Hola, Tere</h1>
         </div>
         <button
           type="button"
@@ -105,8 +105,8 @@ export function Inicio() {
         </button>
       </header>
 
-      <div className="flex gap-2.5 items-center px-5 py-2.5 bg-oliva-fondo text-[13px] text-[#3E4A16]">
-        <Icon name="check" size={18} />
+      <div className="flex gap-2.5 items-center px-5 py-2.5 bg-[#EEF0E1] text-[13px] text-[#3E4A16]">
+        <Icon name="sincronizar" size={18} />
         Precios sincronizados con Ítaca Finanzas
       </div>
 
@@ -175,6 +175,9 @@ export function Inicio() {
                 <button type="button" onClick={() => ir(`/tere/p/${p.id}`)} className="text-left flex items-center gap-1.5 min-w-0">
                   <span className="font-serif text-[18px] font-semibold tracking-[0.12em] uppercase truncate cifra">{p.nombre}</span>
                   {!p.publicado && <span className="text-[10px] tracking-[0.1em] uppercase bg-arena text-tinta-2 rounded px-1.5 py-0.5 shrink-0">Oculto</span>}
+                  {p.publicado && !p.foto_principal && (
+                    <span className="text-[10px] tracking-[0.1em] uppercase bg-alerta-suave text-alerta-texto rounded px-1.5 py-0.5 shrink-0">Sin foto · no se ve</span>
+                  )}
                   <Icon name="siguiente" size={14} className="text-tinta-2 shrink-0" />
                 </button>
                 <label className="flex items-center gap-1.5 text-[13px] text-tinta-2">

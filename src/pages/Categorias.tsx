@@ -16,7 +16,7 @@ export function Categorias() {
       <header className="flex items-center justify-between px-5 pt-4 pb-3">
         <Link to="/" className="flex items-center gap-2.5 min-h-11 text-tinta">
           <Logo className="w-10 h-5" />
-          <span className="font-serif text-[22px] font-semibold tracking-[0.22em]">ÍTACA</span>
+          <h1 className="font-serif text-[22px] font-semibold tracking-[0.22em]">ÍTACA</h1>
         </Link>
         {config && (
           <a

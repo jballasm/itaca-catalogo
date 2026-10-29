@@ -163,7 +163,7 @@ export function Personalizacion() {
         ) : (
           <>
             <div className="flex flex-col gap-2">
-              <label htmlFor="idea" className={`text-[11px] tracking-[0.2em] uppercase ${errorIdea ? 'text-terracota' : 'text-tinta-2'}`}>
+              <label htmlFor="idea" className={`text-[11px] tracking-[0.2em] uppercase ${errorIdea ? 'text-terracota-texto' : 'text-tinta-2'}`}>
                 Cuéntanos tu idea{errorIdea && ` · ${errorIdea}`}
               </label>
               <p className="text-[13px] text-tinta-2 leading-normal">
@@ -213,10 +213,10 @@ export function Personalizacion() {
                       <Icon name="check" size={18} /> Foto lista
                     </span>
                   )}
-                  {foto.estado === 'error' && <span className="text-terracota">{foto.error}</span>}
+                  {foto.estado === 'error' && <span className="text-terracota-texto">{foto.error}</span>}
                 </div>
                 <div className="flex flex-col shrink-0">
-                  <button type="button" onClick={() => refArchivo.current?.click()} className="min-h-11 px-2 text-[13px] text-tierra underline underline-offset-4">
+                  <button type="button" onClick={() => refArchivo.current?.click()} className="min-h-11 px-2 text-[13px] text-tierra-texto underline underline-offset-4">
                     Cambiar
                   </button>
                   <button type="button" onClick={quitarFoto} className="min-h-11 px-2 text-[13px] text-tinta-2 underline underline-offset-4">
@@ -267,7 +267,7 @@ export function Personalizacion() {
 
       <div className={pieEnvio}>
         <div className="max-w-[480px] mx-auto px-4 pt-3.5 pb-[22px] flex flex-col gap-2.5">
-          {!config && <p className="text-[13px] text-terracota px-1">No pudimos cargar los datos de contacto. Recarga la página.</p>}
+          {!config && <p className="text-[13px] text-terracota-texto px-1">No pudimos cargar los datos de contacto. Recarga la página.</p>}
           {subiendo && <p className="text-[13px] text-tinta-2 px-1 text-center">Esperando que termine de subir la foto…</p>}
           <BotonEnvio
             href={config && mensaje ? linkWhatsApp(config, mensaje) : null}

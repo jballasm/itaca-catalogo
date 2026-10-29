@@ -1,11 +1,16 @@
 // Fotos de referencia de las clientas (personalización): comprimir y subir al bucket "referencias".
-import imageCompression from 'browser-image-compression'
 import { supabase } from './supabase'
 
 const TIPOS = /^image\/(jpeg|png|webp|heic|heif)$/i
 const MAX_ORIGINAL = 25 * 1024 * 1024 // fotos de celular grandes: se comprimen antes de subir
 
 export class ErrorFoto extends Error {}
+
+/** La librería de compresión (~50 KB) se descarga recién cuando alguien elige una foto. */
+async function comprimir(file: File, maxSizeMB: number, initialQuality: number): Promise<Blob> {
+  const { default: imageCompression } = await import('browser-image-compression')
+  return imageCompression(file, { maxWidthOrHeight: 1600, maxSizeMB, fileType: 'image/jpeg', initialQuality, useWebWorker: true })
+}
 
 /** Que sea una imagen de tamaño razonable. Algunos selectores de Android la entregan sin tipo: se acepta por la extensión. */
 function revisarArchivo(file: File) {
@@ -20,13 +25,7 @@ function revisarArchivo(file: File) {
 export async function prepararReferencia(file: File): Promise<Blob> {
   revisarArchivo(file)
   try {
-    return await imageCompression(file, {
-      maxWidthOrHeight: 1600,
-      maxSizeMB: 0.4,
-      fileType: 'image/jpeg',
-      initialQuality: 0.82,
-      useWebWorker: true,
-    })
+    return await comprimir(file, 0.4, 0.82)
   } catch {
     throw new ErrorFoto('Esa foto no se pudo usar, prueba con otra.')
   }
@@ -46,7 +45,7 @@ export async function subirReferencia(foto: Blob): Promise<{ path: string; url: 
 export async function prepararFotoCatalogo(file: File): Promise<Blob> {
   revisarArchivo(file)
   try {
-    return await imageCompression(file, { maxWidthOrHeight: 1600, maxSizeMB: 0.5, fileType: 'image/jpeg', initialQuality: 0.85, useWebWorker: true })
+    return await comprimir(file, 0.5, 0.85)
   } catch {
     throw new ErrorFoto('Esa foto no se pudo usar, prueba con otra.')
   }

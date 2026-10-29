@@ -35,6 +35,7 @@ const PATHS = {
   // Catálogo (render 02, 04 y 06)
   bolsa: <path d="M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0" />,
   whatsapp: <path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z" />,
+  sincronizar: <path d="M4 12a8 8 0 0 1 14-5M20 12a8 8 0 0 1-14 5M18 3v4h-4M6 21v-4h4" />,
   camara: (
     <>
       <rect x="3" y="6" width="18" height="14" rx="2" />
