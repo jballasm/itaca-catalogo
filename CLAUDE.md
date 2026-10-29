@@ -18,6 +18,8 @@ Igual a Ítaca Finanzas (mismas versiones): Vite + React + TS · Tailwind v4 (to
 - `public/img/` — fotos de marca estáticas (`hero-mar`, `manos`, `textura`). Las fotos de productos van al bucket `catalogo`, no al repo.
 - `supabase/migrations/` — SQL del catálogo (`101_…`, `102_…`) para pegar a mano en el SQL Editor. Solo agrega; el esquema base está en `../Itaca-Finanzas/supabase/migrations/`.
 - `scripts/verificar-rls.mjs` — prueba los permisos con la llave anon (`node scripts/verificar-rls.mjs`). Correrlo después de cada migración.
+- `scripts/semilla.mjs` — carga la Edición 01: comprime `fotos-catalogo/*.jpg` a WebP (sharp), las sube a `catalogo/productos/<slug>/` y completa productos, colores y portadas. Sin argumentos simula; `--aplicar` escribe. Usa `SUPABASE_SERVICE_ROLE_KEY` de `.env.local`. Se puede volver a correr: no duplica ni pisa colores existentes.
+- En la BD las fotos se guardan como **ruta dentro del bucket** (`productos/naxos/naxos-rojo.webp`); el front arma la URL con `getPublicUrl`. Miniaturas del producto = `foto_principal` + foto de cada color + `fotos`.
 
 ## Datos (decisiones de la Fase 3)
 - `productos.precio` sigue **not null** porque Finanzas lo usa para calcular ventas. "Consultar precio" = `consultar_precio = true`, con `precio = 0` y `activo = false` (así no aparece en "Registrar venta" de Finanzas). Al ponerle precio: `consultar_precio = false` y `activo = true`.
