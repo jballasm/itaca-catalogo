@@ -17,7 +17,8 @@
   --alerta-suave: #f6e9cf;
   --alerta-texto: #9a6b14;
   --terracota-suave: #e3b8a6;
-  color-scheme: light;
+  /* "only" evita el oscurecimiento forzado del navegador en celulares con modo oscuro. */
+  color-scheme: only light;
 }
 
 @theme {
