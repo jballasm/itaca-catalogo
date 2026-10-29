@@ -7,7 +7,7 @@ import { Logo } from '../components/ui'
 import { useCarrito } from '../lib/carrito'
 import { fotoUrl, linkWhatsApp, useCatalogo, type ProductoCatalogo } from '../lib/catalogo'
 import { formatCLP } from '../lib/format'
-import { armarMensaje, detalleRetiro, linkInstagram, NOMBRE_MAX, tituloRetiro } from '../lib/mensaje'
+import { armarMensaje, detalleRetiro, linkInstagramApp, NOMBRE_MAX, tituloRetiro } from '../lib/mensaje'
 import { lineasPedido, textoColores, textoPack, totalPedido, type Entrega, type LineaPedido } from '../lib/pedido'
 
 const CLAVE_DATOS = 'itaca-pedido-datos-v1'
@@ -201,7 +201,7 @@ export function Pedido() {
       {ventanaIg && config && (
         <VentanaInstagram
           cuenta={config.instagram}
-          href={linkInstagram(config)}
+          href={linkInstagramApp(config, navigator.userAgent)}
           textoManual={textoManual}
           onOk={() => {
             setVentanaIg(false)
@@ -254,8 +254,9 @@ export function Pedido() {
 }
 
 /**
- * Ventana que explica cómo pegar el pedido en Instagram. El "Ok" es un link real a ig.me:
- * al ser un toque de la clienta, el celular abre la app de Instagram sin bloquearlo.
+ * Ventana que explica cómo pegar el pedido en Instagram. El "Ok" es un link real a la app
+ * (`linkInstagramApp`: intent en Android, ig.me en iPhone): al ser un toque de la clienta,
+ * el celular abre Instagram sin bloquearlo.
  */
 function VentanaInstagram({
   cuenta,
@@ -315,11 +316,11 @@ function VentanaInstagram({
             </p>
           </>
         )}
+        {/* En la misma pestaña: así el celular pasa el link a la app (en pestaña nueva se queda en la web).
+            El pedido no se pierde: está guardado en el celular. */}
         <a
           ref={refOk}
           href={href}
-          target="_blank"
-          rel="noopener noreferrer"
           onClick={onOk}
           className="h-[52px] rounded-full bg-tinta text-papel flex items-center justify-center text-[15px] font-medium"
         >

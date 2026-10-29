@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { linkWhatsApp } from '../src/lib/catalogo'
-import { armarMensaje, detalleRetiro, linkInstagram, tituloRetiro } from '../src/lib/mensaje'
+import { armarMensaje, detalleRetiro, linkInstagram, linkInstagramApp, tituloRetiro } from '../src/lib/mensaje'
 import { lineasPedido, resumenPedido, totalPedido, type Entrega, type ItemCarrito, type ProductoLinea } from '../src/lib/pedido'
 import type { Config } from '../src/lib/types'
 
@@ -132,5 +132,18 @@ describe('links', () => {
 
   it('Instagram abre el chat de la cuenta', () => {
     expect(linkInstagram(config)).toBe('https://ig.me/m/itaca.cl')
+  })
+
+  it('en Android usa un intent a la app de Instagram con la web de respaldo', () => {
+    const android = 'Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0 Mobile Safari/537.36'
+    expect(linkInstagramApp(config, android)).toBe(
+      'intent://ig.me/m/itaca.cl#Intent;scheme=https;package=com.instagram.android;S.browser_fallback_url=https%3A%2F%2Fig.me%2Fm%2Fitaca.cl;end',
+    )
+  })
+
+  it('en iPhone y computador usa ig.me', () => {
+    const iphone = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1'
+    expect(linkInstagramApp(config, iphone)).toBe('https://ig.me/m/itaca.cl')
+    expect(linkInstagramApp(config, 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)')).toBe('https://ig.me/m/itaca.cl')
   })
 })

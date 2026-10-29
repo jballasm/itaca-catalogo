@@ -62,7 +62,18 @@ export function armarMensaje(d: {
   ].join('\n')
 }
 
-/** Chat de Instagram con la cuenta de Ítaca (abre la app en el celular si está instalada). */
+/** Chat de Instagram con la cuenta de Ítaca (link web). */
 export function linkInstagram(config: Pick<Config, 'instagram'>): string {
   return `https://ig.me/m/${config.instagram}`
+}
+
+/**
+ * Link que abre la **app** de Instagram en el chat. En Android los navegadores (Chrome,
+ * Samsung Internet) se quedan en la web con ig.me, así que se usa un intent con el paquete
+ * de Instagram y la web como respaldo si la app no está. En iPhone y computador, ig.me.
+ */
+export function linkInstagramApp(config: Pick<Config, 'instagram'>, userAgent: string): string {
+  const web = linkInstagram(config)
+  if (!/Android/i.test(userAgent)) return web
+  return `intent://ig.me/m/${config.instagram}#Intent;scheme=https;package=com.instagram.android;S.browser_fallback_url=${encodeURIComponent(web)};end`
 }
