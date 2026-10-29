@@ -21,6 +21,14 @@ Igual a Ítaca Finanzas (mismas versiones): Vite + React + TS · Tailwind v4 (to
 - `scripts/semilla.mjs` — carga la Edición 01: comprime `fotos-catalogo/*.jpg` a WebP (sharp), las sube a `catalogo/productos/<slug>/` y completa productos, colores y portadas. Sin argumentos simula; `--aplicar` escribe. Usa `SUPABASE_SERVICE_ROLE_KEY` de `.env.local`. Se puede volver a correr: no duplica ni pisa colores existentes.
 - En la BD las fotos se guardan como **ruta dentro del bucket** (`productos/naxos/naxos-rojo.webp`); el front arma la URL con `getPublicUrl`. Miniaturas del producto = `foto_principal` + foto de cada color + `fotos`.
 
+## Regla de fotos del producto (decidida por Vicente, vale para todos los productos)
+- Cada color tiene **dos fotos**: `producto_colores.foto` (la pieza sola: miniatura y botón del color) y `producto_colores.foto_modelo` (la modelo usando ese producto en ese color).
+- En el producto, **al tocar un color o su miniatura, la foto grande es la modelo con ese color** (`fotoDeColor`). Si ese color aún no tiene `foto_modelo`, se muestra la pieza sola; **nunca** la modelo con otro color.
+- Al abrir el producto queda elegido el primer color disponible **con** foto de modelo (`colorPorDefecto`).
+- La grilla de la categoría **no** cambia: muestra `foto_principal` (modelo), como el render 03. (Un intento de mostrar la pieza sola en la grilla se revirtió.)
+- Modo Tere (Fase 8) debe permitir subir **ambas** fotos por color.
+- Las fotos de modelo por color de la Edición 01 salen del PDF "Catalogo Itaca 01" (extraídas a `fotos-catalogo/`, que no se sube).
+
 ## Datos (decisiones de la Fase 3)
 - `productos.precio` sigue **not null** porque Finanzas lo usa para calcular ventas. "Consultar precio" = `consultar_precio = true`, con `precio = 0` y `activo = false` (así no aparece en "Registrar venta" de Finanzas). Al ponerle precio: `consultar_precio = false` y `activo = true`.
 - "Próximamente" usa la columna existente `categorias_producto.proximamente`. No hay columna `publicada`.
