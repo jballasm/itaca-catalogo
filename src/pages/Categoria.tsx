@@ -3,7 +3,7 @@ import { Link, Navigate, useParams } from 'react-router-dom'
 import { BarraPedido, BotonFlotante, EspacioBarra, EstadoCatalogo, useAviso } from '../components/catalogo'
 import { Icon } from '../components/Icon'
 import { useCarrito } from '../lib/carrito'
-import { colorPorDefecto, fotoGrilla, fotoUrl, useCatalogo, type ProductoCatalogo } from '../lib/catalogo'
+import { colorPorDefecto, fotoUrl, useCatalogo, type ProductoCatalogo } from '../lib/catalogo'
 
 const chip = 'h-[38px] shrink-0 px-3.5 rounded-full text-[13px] flex items-center'
 
@@ -68,10 +68,10 @@ export function Categoria() {
               <div className="relative">
                 <Link to={`/p/${p.slug}`} className="block">
                   <img
-                    src={fotoUrl(fotoGrilla(p))}
+                    src={fotoUrl(p.foto_principal)}
                     alt={`${cat.nombre} ${p.nombre}`}
                     loading="lazy"
-                    className="w-full h-[184px] object-cover rounded-md bg-arena"
+                    className="w-full h-[184px] object-cover object-[50%_30%] rounded-md bg-arena"
                   />
                 </Link>
                 {p.disponible ? (

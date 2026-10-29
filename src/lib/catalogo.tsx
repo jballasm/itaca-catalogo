@@ -82,16 +82,7 @@ export function miniaturas(p: ProductoCatalogo): string[] {
   return [...new Set(rutas.filter((r): r is string => Boolean(r)))]
 }
 
-/**
- * Foto de la grilla: la pieza sola (no la modelo). Es la del primer color disponible,
- * que por convención es el que usa la modelo, así al abrir el producto la foto de modelo
- * calza con lo que se tocó. Sin colores: primera foto de galería; si no hay, la principal.
- */
-export function fotoGrilla(p: ProductoCatalogo): string | null {
-  return colorPorDefecto(p)?.foto ?? p.fotos[0] ?? p.foto_principal
-}
-
-/** Primer color disponible: el que usa la modelo, el que queda elegido y el que agrega el "+" rápido. */
+/** Primer color disponible (el que agrega el "+" rápido). */
 export function colorPorDefecto(p: ProductoCatalogo): ProductoColor | null {
   return p.colores.find((c) => c.disponible) ?? null
 }

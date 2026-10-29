@@ -20,7 +20,6 @@ Igual a Ítaca Finanzas (mismas versiones): Vite + React + TS · Tailwind v4 (to
 - `scripts/verificar-rls.mjs` — prueba los permisos con la llave anon (`node scripts/verificar-rls.mjs`). Correrlo después de cada migración.
 - `scripts/semilla.mjs` — carga la Edición 01: comprime `fotos-catalogo/*.jpg` a WebP (sharp), las sube a `catalogo/productos/<slug>/` y completa productos, colores y portadas. Sin argumentos simula; `--aplicar` escribe. Usa `SUPABASE_SERVICE_ROLE_KEY` de `.env.local`. Se puede volver a correr: no duplica ni pisa colores existentes.
 - En la BD las fotos se guardan como **ruta dentro del bucket** (`productos/naxos/naxos-rojo.webp`); el front arma la URL con `getPublicUrl`. Miniaturas del producto = `foto_principal` + foto de cada color + `fotos`.
-- **Grilla vs. producto (pedido de Vicente, cambia el render 03):** la grilla muestra la **pieza sola** (`fotoGrilla`: foto del primer color disponible → `fotos[0]` → `foto_principal`); al abrir el producto, la foto grande es la **modelo** (`foto_principal`) y queda elegido ese mismo color. Convención: **el primer color (`orden`) es el que usa la modelo**.
 
 ## Datos (decisiones de la Fase 3)
 - `productos.precio` sigue **not null** porque Finanzas lo usa para calcular ventas. "Consultar precio" = `consultar_precio = true`, con `precio = 0` y `activo = false` (así no aparece en "Registrar venta" de Finanzas). Al ponerle precio: `consultar_precio = false` y `activo = true`.
