@@ -47,7 +47,7 @@ Igual a Ítaca Finanzas (mismas versiones): Vite + React + TS · Tailwind v4 (to
 4. Verificar después: Catálogo de Finanzas muestra precios iguales a Modo Tere, y "Registrar venta" sigue calculando el pack de Aura.
 
 ## Pulido (Fase 9)
-- **Compartir el link**: `index.html` tiene Open Graph con `public/og.jpg` (1200×630: logo infinito + ÍTACA + "Joyas con historia" sobre papel; el infinito sale de `../Itaca-Finanzas/public/icon-512.png`, que lo tiene en mejor resolución que `logo.png`). Todos los links muestran la misma tarjeta (los `#/…` no llegan a los lectores de vista previa; tarjeta por producto requeriría servidor).
+- **Compartir el link**: `index.html` tiene Open Graph con `public/og-logo.jpg` (1200×630: logo infinito + ÍTACA + "Joyas con historia" sobre papel; el infinito sale de `../Itaca-Finanzas/public/icon-512.png`, que lo tiene en mejor resolución que `logo.png`). Todos los links muestran la misma tarjeta (los `#/…` no llegan a los lectores de vista previa; tarjeta por producto requeriría servidor).
 - **Peso**: Modo Tere (`React.lazy`) y `browser-image-compression` (`import()`) se cargan solo cuando se usan; React y Supabase van en archivos aparte (`vite.config.ts`).
 - **Contraste**: para texto chico usar `text-tierra-texto` / `text-terracota-texto` (tokens solo del catálogo, AA ≥ 4,5); `tierra` y `terracota` quedan para íconos, bordes y fondos. Sugerido llevarlos también a Finanzas (su Login tiene el mismo caso).
 - **Samsung Internet en modo oscuro** puede oscurecer la página aunque declaramos `color-scheme: only light` y `darkreader-lock`. Quien abre desde Instagram (link en la bio) no lo ve.
