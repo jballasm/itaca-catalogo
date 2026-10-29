@@ -76,15 +76,36 @@ export function fotoUrl(ruta: string | null | undefined): string | undefined {
   return supabase.storage.from('catalogo').getPublicUrl(ruta).data.publicUrl
 }
 
-/** Miniaturas del producto: foto de modelo + foto de cada color + galería (render 04). */
-export function miniaturas(p: ProductoCatalogo): string[] {
-  const rutas = [p.foto_principal, ...p.colores.map((c) => c.foto), ...p.fotos]
-  return [...new Set(rutas.filter((r): r is string => Boolean(r)))]
+/**
+ * Miniaturas del producto (render 04): foto principal, la pieza de cada color y la galería.
+ * Las de color llevan colorId: al tocarlas se elige ese color (y se ve la modelo con él).
+ */
+export function miniaturas(p: ProductoCatalogo): { ruta: string; colorId: string | null }[] {
+  const lista = [
+    { ruta: p.foto_principal, colorId: null },
+    ...p.colores.map((c) => ({ ruta: c.foto, colorId: c.id })),
+    ...p.fotos.map((ruta) => ({ ruta, colorId: null })),
+  ]
+  const vistas = new Set<string>()
+  return lista.filter((m): m is { ruta: string; colorId: string | null } => {
+    if (!m.ruta || vistas.has(m.ruta)) return false
+    vistas.add(m.ruta)
+    return true
+  })
 }
 
-/** Primer color disponible (el que agrega el "+" rápido). */
+/**
+ * Color elegido al abrir el producto (y el que agrega el "+" rápido): el primero disponible
+ * que tiene foto con la modelo; si ninguno tiene, el primero disponible.
+ */
 export function colorPorDefecto(p: ProductoCatalogo): ProductoColor | null {
-  return p.colores.find((c) => c.disponible) ?? null
+  const disponibles = p.colores.filter((c) => c.disponible)
+  return disponibles.find((c) => c.foto_modelo) ?? disponibles[0] ?? null
+}
+
+/** Foto grande al elegir un color: la modelo con ese color; si no hay, la pieza sola. */
+export function fotoDeColor(c: ProductoColor): string | null {
+  return c.foto_modelo ?? c.foto
 }
 
 /** Link de WhatsApp con el texto ya escrito. */

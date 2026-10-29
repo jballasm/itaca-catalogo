@@ -48,7 +48,10 @@ export interface ProductoColor {
   user_id: string
   producto_id: string
   nombre: string
+  /** La pieza sola (miniatura y botón del color). */
   foto: string | null
+  /** La modelo usando ese color (foto grande al elegirlo). Migración 104. */
+  foto_modelo: string | null
   disponible: boolean
   orden: number
 }

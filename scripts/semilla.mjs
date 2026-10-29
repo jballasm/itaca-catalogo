@@ -5,7 +5,9 @@
 //
 // Requiere en .env.local: VITE_SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY (nunca se imprime).
 // Productos que ya existen (cruce por nombre): solo se tocan foto_principal, fotos y orden.
-// Nunca cambia precio, pack, activo ni nombre. Colores: solo si el producto aún no tiene.
+// Nunca cambia precio, pack, activo ni nombre.
+// Colores (cruce por nombre): si falta, se agrega al final; si existe, solo se completa
+// foto_modelo cuando está vacía (no pisa lo que Tere haya cambiado).
 import { readFileSync, existsSync } from 'node:fs'
 import { createClient } from '@supabase/supabase-js'
 import sharp from 'sharp'
@@ -23,13 +25,47 @@ const CATEGORIAS = [
 
 const CARTERA = { precio: 0, consultar_precio: true, activo: false, edicion: 'Edición 01' }
 
+// colores: [nombre, foto de la pieza, foto de la modelo con ese color (si existe)].
+// Las fotos de modelo por color y los colores Verde lima, Gris, Café (Sifnos) y Negro (Milos)
+// salen del PDF "Catalogo Itaca 01" (Edición 01).
 const PRODUCTOS = [
-  { cat: 'Aros', nombre: 'Sifnos', principal: 'sifnos-modelo', colores: [['Terracota', 'sifnos-detalle'], ['Negro', 'sifnos-negro'], ['Plateado', 'sifnos-plata']] },
+  {
+    cat: 'Aros', nombre: 'Sifnos', principal: 'sifnos-modelo',
+    colores: [
+      ['Terracota', 'sifnos-detalle', 'sifnos-terracota-modelo'],
+      ['Negro', 'sifnos-negro', 'sifnos-negro-modelo'],
+      ['Plateado', 'sifnos-plata'],
+      ['Verde lima', 'sifnos-lima', 'sifnos-lima-modelo'],
+      ['Gris', 'sifnos-gris', 'sifnos-gris-modelo'],
+      ['Café', 'sifnos-cafe', 'sifnos-cafe-modelo'],
+    ],
+  },
   { cat: 'Aros', nombre: 'Paros', principal: 'paros-modelo', galeria: ['paros-detalle'] },
-  { cat: 'Aros', nombre: 'Náxos', principal: 'naxos-modelo', colores: [['Rojo', 'naxos-rojo'], ['Burdeo', 'naxos-burdeo'], ['Oliva y mostaza', 'naxos-detalle'], ['Tonos café', 'naxos-cafe']] },
-  { cat: 'Aros', nombre: 'Milos', principal: 'milos-modelo', colores: [['Dorado', 'milos-detalle']] },
-  { cat: 'Aros', nombre: 'Corfú', principal: 'corfu-modelo', colores: [['Negro y dorado', 'corfu-detalle']] },
-  { cat: 'Aros', nombre: 'Elia', principal: 'elia-modelo', colores: [['Azul', 'elia-detalle'], ['Multicolor', 'elia-naranja'], ['Dorado', 'elia-dorado']] },
+  {
+    cat: 'Aros', nombre: 'Náxos', principal: 'naxos-modelo',
+    colores: [
+      ['Rojo', 'naxos-rojo'],
+      ['Burdeo', 'naxos-burdeo'],
+      ['Oliva y mostaza', 'naxos-detalle', 'naxos-oliva-modelo'],
+      ['Tonos café', 'naxos-cafe', 'naxos-cafe-modelo'],
+    ],
+  },
+  {
+    cat: 'Aros', nombre: 'Milos', principal: 'milos-modelo',
+    colores: [
+      ['Dorado', 'milos-detalle', 'milos-dorado-modelo'],
+      ['Negro', 'milos-negro', 'milos-negro-modelo'],
+    ],
+  },
+  { cat: 'Aros', nombre: 'Corfú', principal: 'corfu-modelo', colores: [['Negro y dorado', 'corfu-detalle', 'corfu-negro-dorado-modelo']] },
+  {
+    cat: 'Aros', nombre: 'Elia', principal: 'elia-modelo',
+    colores: [
+      ['Azul', 'elia-detalle', 'elia-azul-modelo'],
+      ['Multicolor', 'elia-naranja', 'elia-multicolor-modelo'],
+      ['Dorado', 'elia-dorado'],
+    ],
+  },
   { cat: 'Pulseras', nombre: 'Aura', principal: 'aura' },
   { cat: 'Pulseras', nombre: 'Atenea', principal: 'atenea' },
   { cat: 'Pulseras', nombre: 'Penélope', principal: 'penelope' },
@@ -79,13 +115,13 @@ const catPorNombre = new Map(cats.map((c) => [norm(c.nombre), c]))
 const prodPorNombre = new Map(prods.map((p) => [norm(p.nombre), p]))
 
 // --- Fotos ---
-const resumen = { fotos: 0, kbAntes: 0, kbDespues: 0, actualizados: 0, creados: 0, colores: 0, categorias: 0 }
+const resumen = { fotos: 0, kbAntes: 0, kbDespues: 0, actualizados: 0, creados: 0, colores: 0, modelos: 0, categorias: 0 }
 const subidas = new Map() // archivo → ruta en el bucket
 
 async function subir(archivo, slugProducto) {
   if (subidas.has(archivo)) return subidas.get(archivo)
-  const origen = new URL(`${archivo}.jpg`, FOTOS)
-  if (!existsSync(origen)) throw new Error(`No existe fotos-catalogo/${archivo}.jpg`)
+  const origen = ['jpg', 'jpeg', 'png'].map((ext) => new URL(`${archivo}.${ext}`, FOTOS)).find((u) => existsSync(u))
+  if (!origen) throw new Error(`No existe fotos-catalogo/${archivo}.jpg (ni .png)`)
   const original = readFileSync(origen)
   const webp = await sharp(original)
     .rotate()
@@ -117,7 +153,9 @@ for (const d of PRODUCTOS) {
   const fotos = []
   for (const g of d.galeria ?? []) fotos.push(await subir(g, slug))
   const colores = []
-  for (const [nombre, archivo] of d.colores ?? []) colores.push({ nombre, foto: await subir(archivo, slug) })
+  for (const [nombre, archivo, modelo] of d.colores ?? []) {
+    colores.push({ nombre, foto: await subir(archivo, slug), foto_modelo: modelo ? await subir(modelo, slug) : null })
+  }
 
   let id = existente?.id
   if (existente) {
@@ -143,18 +181,28 @@ for (const d of PRODUCTOS) {
   }
 
   if (colores.length) {
-    const tiene = id ? ok(await sb.from('producto_colores').select('id').eq('producto_id', id), 'leer colores').length : 0
-    if (tiene) {
-      console.log(`  ${d.nombre} ya tiene ${tiene} colores; no se tocan`)
-    } else {
-      console.log(`  + colores: ${colores.map((c) => c.nombre).join(', ')}`)
-      if (APLICAR) {
-        ok(
-          await sb.from('producto_colores').insert(colores.map((c, i) => ({ user_id: uid, producto_id: id, nombre: c.nombre, foto: c.foto, orden: i + 1 }))),
-          `colores de ${d.nombre}`,
-        )
+    const existentes = id
+      ? ok(await sb.from('producto_colores').select('id, nombre, foto_modelo, orden').eq('producto_id', id), 'leer colores')
+      : []
+    const porNombre = new Map(existentes.map((c) => [norm(c.nombre), c]))
+    let ultimoOrden = Math.max(0, ...existentes.map((c) => c.orden))
+    for (const c of colores) {
+      const ya = porNombre.get(norm(c.nombre))
+      if (!ya) {
+        ultimoOrden++
+        console.log(`  + color ${c.nombre}${c.foto_modelo ? ' (con modelo)' : ''}`)
+        if (APLICAR) {
+          ok(
+            await sb.from('producto_colores').insert({ user_id: uid, producto_id: id, nombre: c.nombre, foto: c.foto, foto_modelo: c.foto_modelo, orden: ultimoOrden }),
+            `color ${c.nombre} de ${d.nombre}`,
+          )
+        }
+        resumen.colores++
+      } else if (c.foto_modelo && !ya.foto_modelo) {
+        console.log(`  ~ ${c.nombre}: foto de modelo`)
+        if (APLICAR) ok(await sb.from('producto_colores').update({ foto_modelo: c.foto_modelo }).eq('id', ya.id), `modelo de ${c.nombre}`)
+        resumen.modelos++
       }
-      resumen.colores += colores.length
     }
   }
 }
@@ -171,6 +219,7 @@ for (const c of CATEGORIAS) {
 
 console.log(
   `\nFotos: ${resumen.fotos} (${Math.round(resumen.kbAntes)} KB en JPG → ${Math.round(resumen.kbDespues)} KB en WebP)` +
-    `\nProductos: ${resumen.actualizados} actualizados, ${resumen.creados} nuevos · Colores: ${resumen.colores} · Categorías: ${resumen.categorias}` +
+    `\nProductos: ${resumen.actualizados} actualizados, ${resumen.creados} nuevos · Colores nuevos: ${resumen.colores}` +
+    ` · Fotos de modelo completadas: ${resumen.modelos} · Categorías: ${resumen.categorias}` +
     (APLICAR ? '\nListo.' : '\nSimulación terminada. Para escribir: node scripts/semilla.mjs --aplicar'),
 )

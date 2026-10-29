@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom'
 import { BotonFlotante, EstadoCatalogo, Mensaje, useAviso } from '../components/catalogo'
 import { Icon } from '../components/Icon'
 import { useCarrito } from '../lib/carrito'
-import { colorPorDefecto, fotoUrl, linkWhatsApp, miniaturas, useCatalogo, type ProductoCatalogo } from '../lib/catalogo'
+import { colorPorDefecto, fotoDeColor, fotoUrl, linkWhatsApp, miniaturas, useCatalogo, type ProductoCatalogo } from '../lib/catalogo'
 import { formatCLP } from '../lib/format'
 import { subtotal } from '../lib/pedido'
 
@@ -22,8 +22,10 @@ function Ficha({ p }: { p: ProductoCatalogo }) {
   const { categorias, config } = useCatalogo()
   const { agregar, resumen } = useCarrito()
   const [aviso, mostrarAviso] = useAviso()
-  const [colorId, setColorId] = useState<string | null>(colorPorDefecto(p)?.id ?? null)
-  const [foto, setFoto] = useState(p.foto_principal)
+  const inicial = colorPorDefecto(p)
+  const [colorId, setColorId] = useState<string | null>(inicial?.id ?? null)
+  // Se abre con la modelo usando el color elegido; si ese color no tiene, la foto principal.
+  const [foto, setFoto] = useState(inicial?.foto_modelo ?? p.foto_principal)
   const [cantidad, setCantidad] = useState(1)
 
   const cat = categorias.find((c) => c.id === p.categoria_producto_id)
@@ -31,17 +33,25 @@ function Ficha({ p }: { p: ProductoCatalogo }) {
   const agotado = !p.disponible || (p.colores.length > 0 && !p.colores.some((c) => c.disponible))
   const thumbs = miniaturas(p)
 
+  /** Al elegir un color, la foto grande es la modelo con ese color (o la pieza si no hay). */
   function elegirColor(id: string) {
     const c = p.colores.find((x) => x.id === id)
     if (!c?.disponible) return
     setColorId(id)
-    if (c.foto) setFoto(c.foto)
+    const f = fotoDeColor(c)
+    if (f) setFoto(f)
   }
 
-  function elegirFoto(ruta: string) {
-    setFoto(ruta)
-    const c = p.colores.find((x) => x.foto === ruta && x.disponible)
-    if (c) setColorId(c.id)
+  /** Miniatura de un color = elegir ese color; las demás solo cambian la foto grande. */
+  function tocarMiniatura(m: { ruta: string; colorId: string | null }) {
+    if (m.colorId) elegirColor(m.colorId)
+    else setFoto(m.ruta)
+  }
+
+  const miniaturaActiva = (m: { ruta: string; colorId: string | null }) => {
+    if (!m.colorId) return m.ruta === foto
+    const c = p.colores.find((x) => x.id === m.colorId)
+    return m.colorId === colorId && !!c && fotoDeColor(c) === foto
   }
 
   function agregarAlPedido() {
@@ -76,18 +86,22 @@ function Ficha({ p }: { p: ProductoCatalogo }) {
 
         {thumbs.length > 1 && (
           <div className="flex gap-2 overflow-x-auto [scrollbar-width:none] -mx-5 px-5 py-0.5">
-            {thumbs.map((r) => (
-              <button
-                key={r}
-                type="button"
-                aria-label="Ver foto"
-                aria-pressed={r === foto}
-                onClick={() => elegirFoto(r)}
-                className={`shrink-0 rounded-md ${r === foto ? 'ring-2 ring-tinta' : ''}`}
-              >
-                <img src={fotoUrl(r)} alt="" loading="lazy" className="w-[58px] h-[58px] object-cover rounded-md" />
-              </button>
-            ))}
+            {thumbs.map((m) => {
+              const activa = miniaturaActiva(m)
+              const nombreColor = p.colores.find((c) => c.id === m.colorId)?.nombre
+              return (
+                <button
+                  key={m.ruta}
+                  type="button"
+                  aria-label={nombreColor ? `Ver color ${nombreColor}` : 'Ver foto'}
+                  aria-pressed={activa}
+                  onClick={() => tocarMiniatura(m)}
+                  className={`shrink-0 rounded-md ${activa ? 'ring-2 ring-tinta' : ''}`}
+                >
+                  <img src={fotoUrl(m.ruta)} alt="" loading="lazy" className="w-[58px] h-[58px] object-cover rounded-md" />
+                </button>
+              )
+            })}
           </div>
         )}
 
