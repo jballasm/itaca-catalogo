@@ -32,6 +32,14 @@ const PATHS = {
     </>
   ),
   lista: <path d="M4 6h16M4 12h16M4 18h10" />,
+  // Catálogo (render 02 y 04)
+  bolsa: <path d="M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0" />,
+  instagram: (
+    <>
+      <rect x="4" y="4" width="16" height="16" rx="5" />
+      <circle cx="12" cy="12" r="3.5" />
+    </>
+  ),
 } as const
 
 export type NombreIcono = keyof typeof PATHS
