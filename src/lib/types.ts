@@ -1,18 +1,17 @@
 // Tipos de las tablas de Supabase.
 // Base: ../Itaca-Finanzas/supabase/migrations/001_schema.sql (dueño del esquema).
-// Columnas y tablas marcadas "catálogo" existen recién tras las migraciones de
-// supabase/migrations/ de este proyecto (plan §6).
+// Columnas y tablas marcadas "catálogo" existen tras supabase/migrations/101_catalogo_esquema.sql.
 
 export interface CategoriaProducto {
   id: string
   user_id: string
   nombre: string
   orden: number
+  /** Se muestra "Próximamente" y no se puede abrir (Collares). */
   proximamente: boolean
   // catálogo
   slug: string | null
   foto_portada: string | null
-  publicada: boolean
   descripcion: string | null
 }
 
@@ -21,11 +20,12 @@ export interface Producto {
   user_id: string
   categoria_producto_id: string
   nombre: string
-  /** null = "Consultar precio" (catálogo; en Finanzas hoy es not null). */
-  precio: number | null
+  /** Siempre un número: Finanzas lo usa para calcular ventas. Ver consultar_precio. */
+  precio: number
   precio_pack: number | null
   unidades_pack: number | null
   edicion: string | null
+  /** De Finanzas: si aparece en "Registrar venta". */
   activo: boolean
   // catálogo
   slug: string | null
@@ -37,6 +37,8 @@ export interface Producto {
   foto_principal: string | null
   /** Galería de detalles. */
   fotos: string[]
+  /** true = "Consultar precio": se ignora precio y no suma al total. */
+  consultar_precio: boolean
 }
 
 // --- Tablas nuevas del catálogo ---
