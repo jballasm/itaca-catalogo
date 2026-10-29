@@ -1,7 +1,7 @@
 // Tu pedido (render/06-pedido): entrega, total y envío por WhatsApp o Instagram.
-import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { EstadoCatalogo, useAviso } from '../components/catalogo'
+import { EstadoCatalogo } from '../components/catalogo'
 import { Icon } from '../components/Icon'
 import { Logo } from '../components/ui'
 import { useCarrito } from '../lib/carrito'
@@ -61,7 +61,8 @@ export function Pedido() {
   const [faltaEntrega, setFaltaEntrega] = useState(false)
   const [enviado, setEnviado] = useState(false)
   const [textoManual, setTextoManual] = useState<string | null>(null)
-  const [aviso, mostrarAviso] = useAviso(220)
+  const [ventanaIg, setVentanaIg] = useState(false)
+  const cerrarVentanaIg = useCallback(() => setVentanaIg(false), [])
   const refEntrega = useRef<HTMLFieldSetElement>(null)
 
   useEffect(() => {
@@ -107,11 +108,15 @@ export function Pedido() {
     return false
   }
 
+  /**
+   * Instagram (pedido de Vicente): se copia en este mismo toque y se muestra una ventana que
+   * explica qué hacer. Instagram se abre recién con el "Ok" (otro toque, así no se bloquea).
+   */
   function porInstagram(e: MouseEvent) {
     if (!revisar(e) || !mensaje) return
+    setTextoManual(null)
     copiar(mensaje, () => setTextoManual(mensaje))
-    mostrarAviso('Pedido copiado: pégalo en el chat de Instagram')
-    setEnviado(true)
+    setVentanaIg(true)
   }
 
   const productoDe = (l: LineaPedido) => productos.find((p) => p.id === l.producto_id) as ProductoCatalogo
@@ -191,15 +196,20 @@ export function Pedido() {
           </div>
         )}
 
-        {textoManual && (
-          <div className="mt-2 rounded-xl border border-terracota bg-tarjeta p-4 flex flex-col gap-2">
-            <p className="text-[14px] text-terracota">No pudimos copiarlo solo. Mantén apretado el texto para copiarlo:</p>
-            <textarea readOnly value={textoManual} rows={7} className="w-full text-[13px] bg-papel rounded-lg p-2 border border-linea" />
-          </div>
-        )}
       </div>
 
-      {aviso}
+      {ventanaIg && config && (
+        <VentanaInstagram
+          cuenta={config.instagram}
+          href={linkInstagram(config)}
+          textoManual={textoManual}
+          onOk={() => {
+            setVentanaIg(false)
+            setEnviado(true)
+          }}
+          onVolver={cerrarVentanaIg}
+        />
+      )}
 
       <div className={pie}>
         <div className="max-w-[480px] mx-auto px-4 pt-3.5 pb-[22px] flex flex-col gap-2.5">
@@ -229,7 +239,7 @@ export function Pedido() {
             Enviar pedido por WhatsApp
           </BotonEnvio>
           <BotonEnvio
-            href={config && mensaje ? linkInstagram(config) : null}
+            href={null}
             deshabilitado={!config}
             onClick={porInstagram}
             className="h-[50px] border border-tinta text-tinta gap-2.5 text-[14px]"
@@ -244,8 +254,88 @@ export function Pedido() {
 }
 
 /**
- * Link real (abre WhatsApp o Instagram en el mismo toque, sin que el celular lo bloquee)
- * cuando el pedido está listo; si falta la entrega, un botón que avisa qué falta.
+ * Ventana que explica cómo pegar el pedido en Instagram. El "Ok" es un link real a ig.me:
+ * al ser un toque de la clienta, el celular abre la app de Instagram sin bloquearlo.
+ */
+function VentanaInstagram({
+  cuenta,
+  href,
+  textoManual,
+  onOk,
+  onVolver,
+}: {
+  cuenta: string
+  href: string
+  textoManual: string | null
+  onOk: () => void
+  onVolver: () => void
+}) {
+  const refOk = useRef<HTMLAnchorElement>(null)
+  useEffect(() => {
+    refOk.current?.focus()
+    const esc = (e: KeyboardEvent) => e.key === 'Escape' && onVolver()
+    document.addEventListener('keydown', esc)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', esc)
+      document.body.style.overflow = ''
+    }
+  }, [onVolver])
+
+  return (
+    // Tocar el fondo oscuro también vuelve (para lectores de pantalla está el botón "Volver").
+    <div
+      className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center px-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="ig-titulo"
+      onClick={(e) => e.target === e.currentTarget && onVolver()}
+    >
+      <div className="relative w-full max-w-[360px] rounded-[22px] bg-papel p-6 flex flex-col gap-4 text-center shadow-xl">
+        <Icon name="instagram" size={28} strokeWidth={1.5} className="self-center text-tierra" />
+        {textoManual ? (
+          <>
+            <h2 id="ig-titulo" className="font-serif text-[24px] font-semibold leading-tight">
+              Copia tu pedido
+            </h2>
+            <p className="text-[15px] text-tinta-2 leading-relaxed">
+              No pudimos copiarlo solo. Mantén presionado el texto, elige <b className="text-tinta font-medium">Copiar</b> y
+              luego toca Ok.
+            </p>
+            <textarea readOnly value={textoManual} rows={6} className="w-full text-[13px] text-left bg-tarjeta rounded-lg p-2 border border-linea" />
+          </>
+        ) : (
+          <>
+            <h2 id="ig-titulo" className="font-serif text-[24px] font-semibold leading-tight">
+              ¡Tu pedido está copiado!
+            </h2>
+            <p className="text-[15px] text-tinta-2 leading-relaxed">
+              Ahora te llevamos al chat de <b className="text-tinta font-medium">@{cuenta}</b> en Instagram. Cuando se abra, mantén
+              presionado el espacio para escribir, elige <b className="text-tinta font-medium">Pegar</b> y envíaselo a Tere.
+            </p>
+          </>
+        )}
+        <a
+          ref={refOk}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={onOk}
+          className="h-[52px] rounded-full bg-tinta text-papel flex items-center justify-center text-[15px] font-medium"
+        >
+          Ok, ir a Instagram
+        </a>
+        <button type="button" onClick={onVolver} className="min-h-11 text-[14px] text-tinta-2 underline underline-offset-4">
+          Volver
+        </button>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Con href: link real (abre WhatsApp en el mismo toque, sin que el celular lo bloquee).
+ * Sin href: botón (Instagram, que abre la ventana; o cualquiera si falta la entrega).
  */
 function BotonEnvio({
   href,
