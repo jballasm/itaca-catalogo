@@ -9,6 +9,7 @@ import { supabase } from './lib/supabase'
 import { Categoria } from './pages/Categoria'
 import { Categorias } from './pages/Categorias'
 import { Portada } from './pages/Portada'
+import { Pedido } from './pages/Pedido'
 import { Producto } from './pages/Producto'
 import { Login } from './tere/Login'
 
@@ -59,8 +60,8 @@ export default function App() {
               <Route path="categorias" element={<Categorias />} />
               <Route path="c/:slug" element={<Categoria />} />
               <Route path="p/:slug" element={<Producto />} />
-              {/* Provisorios hasta las Fases 6 y 7 */}
-              <Route path="pedido" element={<Mensaje titulo="Tu pedido" texto="Muy pronto vas a poder enviar tu pedido desde aquí." />} />
+              <Route path="pedido" element={<Pedido />} />
+              {/* Provisorio hasta la Fase 7 */}
               <Route path="personaliza" element={<Mensaje titulo="Personalización" texto="Muy pronto vas a poder pedir tu pieza personalizada." />} />
               <Route path="tere" element={<ModoTere />} />
               <Route path="*" element={<Navigate to="/" replace />} />

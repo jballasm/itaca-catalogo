@@ -65,8 +65,8 @@ export function EspacioBarra() {
   return resumen.unidades > 0 ? <div className="h-[96px]" aria-hidden="true" /> : <div className="h-6" aria-hidden="true" />
 }
 
-/** Aviso breve ("Agregado · Náxos (Rojo)"). */
-export function useAviso(): [ReactNode, (texto: string) => void] {
+/** Aviso breve ("Agregado · Náxos (Rojo)"). `abajo`: px desde el borde inferior (sobre la barra fija). */
+export function useAviso(abajo = 96): [ReactNode, (texto: string) => void] {
   const [texto, setTexto] = useState<string | null>(null)
   const t = useRef<number | undefined>(undefined)
   const mostrar = useCallback((s: string) => {
@@ -76,8 +76,8 @@ export function useAviso(): [ReactNode, (texto: string) => void] {
   }, [])
   useEffect(() => () => window.clearTimeout(t.current), [])
   const nodo = (
-    <div aria-live="polite" className="fixed inset-x-0 bottom-[96px] z-30 flex justify-center pointer-events-none px-4">
-      {texto && <div className="rounded-full bg-tinta text-papel text-[14px] px-5 py-2.5 shadow-lg">{texto}</div>}
+    <div aria-live="polite" style={{ bottom: abajo }} className="fixed inset-x-0 z-30 flex justify-center pointer-events-none px-4">
+      {texto && <div className="rounded-full bg-tinta text-papel text-[14px] text-center px-5 py-2.5 shadow-lg">{texto}</div>}
     </div>
   )
   return [nodo, mostrar]

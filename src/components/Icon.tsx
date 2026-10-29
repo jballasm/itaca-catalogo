@@ -32,8 +32,9 @@ const PATHS = {
     </>
   ),
   lista: <path d="M4 6h16M4 12h16M4 18h10" />,
-  // Catálogo (render 02 y 04)
+  // Catálogo (render 02, 04 y 06)
   bolsa: <path d="M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0" />,
+  whatsapp: <path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z" />,
   instagram: (
     <>
       <rect x="4" y="4" width="16" height="16" rx="5" />

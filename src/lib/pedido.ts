@@ -1,5 +1,5 @@
-// Cálculo del pedido: packs y "Consultar precio". Lógica pura (tests/pedido.test.ts).
-import type { Producto } from './types'
+// Cálculo del pedido: packs, "Consultar precio" y entrega. Lógica pura (tests/pedido.test.ts, tests/mensaje.test.ts).
+import type { Config, Producto } from './types'
 
 export type PrecioProducto = Pick<Producto, 'id' | 'precio' | 'precio_pack' | 'unidades_pack' | 'consultar_precio'>
 
@@ -52,4 +52,87 @@ export function resumenPedido(items: ItemCarrito[], productos: PrecioProducto[])
     else total += subtotal(p, q)
   }
   return { unidades, total, hayConsultar }
+}
+
+// --- Entrega y total (Fase 6) ---
+
+export type Entrega = 'retiro' | 'envio' | 'starken'
+
+/** Costo de la entrega: retiro gratis, envío según config, Starken por confirmar (null). */
+export function costoEnvio(entrega: Entrega, config: Pick<Config, 'envio_precio'>): number | null {
+  if (entrega === 'retiro') return 0
+  if (entrega === 'envio') return config.envio_precio
+  return null
+}
+
+export interface TotalPedido {
+  /** Productos con precio + envío (si tiene costo conocido). */
+  total: number
+  envioPorConfirmar: boolean
+  hayConsultar: boolean
+}
+
+/** Starken y "Consultar precio" no suman al total. */
+export function totalPedido(resumen: ResumenPedido, entrega: Entrega, config: Pick<Config, 'envio_precio'>): TotalPedido {
+  const envio = costoEnvio(entrega, config)
+  return { total: resumen.total + (envio ?? 0), envioPorConfirmar: envio === null, hayConsultar: resumen.hayConsultar }
+}
+
+// --- Líneas del pedido: una por producto, con sus colores juntos (el pack se arma entre colores) ---
+
+export type ProductoLinea = PrecioProducto & Pick<Producto, 'nombre'> & { colores: { id: string; nombre: string }[] }
+
+export interface LineaPedido {
+  producto_id: string
+  nombre: string
+  items: { color_id: string | null; color: string | null; cantidad: number }[]
+  cantidad: number
+  /** null = "Consultar precio". */
+  subtotal: number | null
+  /** Packs completos y unidades sueltas, si el producto tiene pack y se alcanza. */
+  pack: { unidades: number; packs: number; resto: number } | null
+}
+
+/** En el orden en que la clienta agregó cada producto. Ignora productos que ya no están. */
+export function lineasPedido(items: ItemCarrito[], productos: ProductoLinea[]): LineaPedido[] {
+  const lineas: LineaPedido[] = []
+  const porId = new Map(productos.map((p) => [p.id, p]))
+  for (const id of new Set(items.map((i) => i.producto_id))) {
+    const p = porId.get(id)
+    const propios = items.filter((i) => i.producto_id === id && i.cantidad > 0)
+    if (!p || !propios.length) continue
+    const cantidad = propios.reduce((s, i) => s + i.cantidad, 0)
+    const u = p.unidades_pack
+    const packs = p.precio_pack != null && u && u > 1 ? Math.floor(cantidad / u) : 0
+    lineas.push({
+      producto_id: p.id,
+      nombre: p.nombre,
+      items: propios.map((i) => ({
+        color_id: i.color_id,
+        color: p.colores.find((c) => c.id === i.color_id)?.nombre ?? null,
+        cantidad: i.cantidad,
+      })),
+      cantidad,
+      subtotal: p.consultar_precio ? null : subtotal(p, cantidad),
+      pack: packs > 0 && u ? { unidades: u, packs, resto: cantidad - packs * u } : null,
+    })
+  }
+  return lineas
+}
+
+/** "Rojo", "Rojo + Burdeo x2" o null si no hay colores. */
+export function textoColores(l: Pick<LineaPedido, 'items'>): string | null {
+  const conColor = l.items.filter((i) => i.color)
+  if (!conColor.length) return null
+  if (conColor.length === 1) return conColor[0].color
+  return conColor.map((i) => (i.cantidad > 1 ? `${i.color} x${i.cantidad}` : i.color)).join(' + ')
+}
+
+/** "pack 2", "x3 (pack 2 + 1)", "x4 (2 packs de 2)" o null. */
+export function textoPack(l: Pick<LineaPedido, 'pack' | 'cantidad'>): string | null {
+  if (!l.pack) return null
+  const { unidades, packs, resto } = l.pack
+  if (packs === 1 && resto === 0) return `pack ${unidades}`
+  const base = packs === 1 ? `pack ${unidades}` : `${packs} packs de ${unidades}`
+  return `x${l.cantidad} (${base}${resto ? ` + ${resto}` : ''})`
 }
