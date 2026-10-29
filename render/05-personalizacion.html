@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ítaca · Personalización C · render</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+a{color:#3A3127}a:hover{color:#8B6A45}
+</style>
+</head>
+<body>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F4EEE4; color: #3A3127; font-family: Jost, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+<div style="position: relative; height: 200px; flex: 0 0 auto">
+<img src="img/manos.jpg" alt="Manos tejiendo" style="width: 100%; height: 100%; object-fit: cover; display: block">
+<a href="02-categorias.html" aria-label="Volver a categorías" style="position: absolute; top: 14px; left: 16px; width: 44px; height: 44px; border-radius: 22px; background: rgba(244,238,228,.92); display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3A3127" stroke-width="1.8" aria-hidden="true"><path d="M15 6l-6 6 6 6"></path></svg></a>
+</div>
+
+<div style="flex: 1 1 auto; min-height: 0; margin-top: -22px; position: relative; background: #F4EEE4; border-radius: 22px 22px 0 0; padding: 12px 20px 0; display: flex; flex-direction: column; gap: 14px">
+<div style="align-self: center; width: 40px; height: 4px; border-radius: 2px; background: #DCD1C0"></div>
+<div style="display: flex; flex-direction: column; gap: 4px">
+<h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; letter-spacing: .14em; line-height: 1.1">PERSONALIZACIÓN</h1>
+<p style="margin: 0; font-size: 14px; color: #4E443A; line-height: 1.45">Creamos cada pieza a tu gusto, cuidando cada detalle para que sea verdaderamente tuya.</p>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 8px">
+<label for="idea-c" style="font-size: 11px; letter-spacing: .2em; color: #6B5F51">CUÉNTANOS TU IDEA</label>
+<div style="font-size: 13px; color: #4E443A; line-height: 1.5">Incluye: <span style="color: #3A3127; font-weight: 500">qué pieza</span>, <span style="color: #3A3127; font-weight: 500">colores</span>, <span style="color: #3A3127; font-weight: 500">tamaño o estilo</span> y <span style="color: #3A3127; font-weight: 500">para cuándo la necesitas</span>.</div>
+<textarea id="idea-c" placeholder="Hola Tere, me gustaría unos aros…" style="height: 110px; border-radius: 12px; border: 1px solid #DCD1C0; background: #FBF8F3; padding: 12px 14px; font: 15px Jost, sans-serif; color: #3A3127; resize: none"></textarea>
+</div>
+
+<button type="button" style="height: 64px; border-radius: 12px; border: 1.5px dashed #8B6A45; background: #FBF8F3; display: flex; align-items: center; justify-content: center; gap: 12px; font: 14px Jost, sans-serif; color: #3A3127"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8B6A45" stroke-width="1.5" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2"></rect><circle cx="12" cy="13" r="3.5"></circle><path d="M8 6l1.5-2h5L16 6"></path></svg>Adjuntar foto de referencia (opcional)</button>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px">
+<div style="border-radius: 10px; background: #E9DFD0; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; letter-spacing: .16em; color: #6B5F51">ANTICIPACIÓN</span><span style="font-size: 15px; font-weight: 500">7 días</span></div>
+<div style="border-radius: 10px; background: #E9DFD0; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px"><span style="font-size: 11px; letter-spacing: .16em; color: #6B5F51">COSTO ADICIONAL</span><span style="font-size: 15px; font-weight: 500">$15.000</span></div>
+</div>
+</div>
+
+<div style="flex: 0 0 auto; padding: 14px 16px 22px; display: flex; flex-direction: column; gap: 10px">
+<a href="#" style="text-decoration: none; height: 56px; border-radius: 28px; background: #3A3127; color: #F4EEE4; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 15px; font-weight: 500"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F4EEE4" stroke-width="1.6" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"></path></svg>Enviar por WhatsApp</a>
+<a href="#" style="text-decoration: none; height: 50px; border-radius: 25px; border: 1px solid #3A3127; color: #3A3127; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 14px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3A3127" stroke-width="1.6" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="5"></rect><circle cx="12" cy="12" r="3.5"></circle></svg>Enviar a @itaca.cl</a>
+</div>
+</div>
+</body>
+</html>

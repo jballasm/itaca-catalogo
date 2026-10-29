@@ -1,0 +1,19 @@
+node_modules
+dist
+*.local
+.env*
+!.env.example
+.claude/settings.local.json
+
+# Nunca subir planillas ni documentos (el repo es público)
+*.xlsx
+*.xls
+*.csv
+*.pdf
+# Fotos originales del catálogo: se suben al bucket "catalogo", no al repo
+fotos-catalogo/
+
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
