@@ -35,6 +35,13 @@ const PATHS = {
   // Catálogo (render 02, 04 y 06)
   bolsa: <path d="M6 8h12l-1 12H7zM9 8a3 3 0 0 1 6 0" />,
   whatsapp: <path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z" />,
+  camara: (
+    <>
+      <rect x="3" y="6" width="18" height="14" rx="2" />
+      <circle cx="12" cy="13" r="3.5" />
+      <path d="M8 6l1.5-2h5L16 6" />
+    </>
+  ),
   instagram: (
     <>
       <rect x="4" y="4" width="16" height="16" rx="5" />

@@ -1,0 +1,37 @@
+// Fotos de referencia de las clientas (personalización): comprimir y subir al bucket "referencias".
+import imageCompression from 'browser-image-compression'
+import { supabase } from './supabase'
+
+const TIPOS = /^image\/(jpeg|png|webp|heic|heif)$/i
+const MAX_ORIGINAL = 25 * 1024 * 1024 // fotos de celular grandes: se comprimen antes de subir
+
+export class ErrorFoto extends Error {}
+
+/**
+ * Comprime a JPEG (máx. 1600 px, ~400 KB). JPEG y no WebP: Safari no genera WebP de forma confiable.
+ * El bucket acepta como máximo 5 MB; aquí queda muy por debajo.
+ */
+export async function prepararReferencia(file: File): Promise<Blob> {
+  // Algunos selectores de Android entregan la foto sin tipo: se acepta por la extensión.
+  const esImagen = TIPOS.test(file.type) || (!file.type && /\.(jpe?g|png|webp|heic|heif)$/i.test(file.name))
+  if (!esImagen || file.size > MAX_ORIGINAL) throw new ErrorFoto('Esa foto no se pudo usar, prueba con otra.')
+  try {
+    return await imageCompression(file, {
+      maxWidthOrHeight: 1600,
+      maxSizeMB: 0.4,
+      fileType: 'image/jpeg',
+      initialQuality: 0.82,
+      useWebWorker: true,
+    })
+  } catch {
+    throw new ErrorFoto('Esa foto no se pudo usar, prueba con otra.')
+  }
+}
+
+/** Sube a referencias/<uuid>.jpg (nombre impredecible, plan §6.3) y devuelve la ruta y la URL pública. */
+export async function subirReferencia(foto: Blob): Promise<{ path: string; url: string }> {
+  const path = `${crypto.randomUUID()}.jpg`
+  const { error } = await supabase.storage.from('referencias').upload(path, foto, { contentType: 'image/jpeg', upsert: false })
+  if (error) throw new ErrorFoto('No pudimos subir la foto, revisa tu conexión.')
+  return { path, url: supabase.storage.from('referencias').getPublicUrl(path).data.publicUrl }
+}

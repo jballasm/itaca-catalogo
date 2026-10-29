@@ -1,7 +1,6 @@
 import { useEffect } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthProvider, useAuth } from './auth/AuthProvider'
-import { Mensaje } from './components/catalogo'
 import { BotonPrimario, Encabezado, Logo, Pantalla, Proximamente } from './components/ui'
 import { CarritoProvider } from './lib/carrito'
 import { CatalogoProvider } from './lib/catalogo'
@@ -10,6 +9,7 @@ import { Categoria } from './pages/Categoria'
 import { Categorias } from './pages/Categorias'
 import { Portada } from './pages/Portada'
 import { Pedido } from './pages/Pedido'
+import { Personalizacion } from './pages/Personalizacion'
 import { Producto } from './pages/Producto'
 import { Login } from './tere/Login'
 
@@ -61,8 +61,7 @@ export default function App() {
               <Route path="c/:slug" element={<Categoria />} />
               <Route path="p/:slug" element={<Producto />} />
               <Route path="pedido" element={<Pedido />} />
-              {/* Provisorio hasta la Fase 7 */}
-              <Route path="personaliza" element={<Mensaje titulo="Personalización" texto="Muy pronto vas a poder pedir tu pieza personalizada." />} />
+              <Route path="personaliza" element={<Personalizacion />} />
               <Route path="tere" element={<ModoTere />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
